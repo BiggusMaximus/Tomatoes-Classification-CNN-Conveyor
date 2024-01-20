@@ -1,2 +1,2 @@
 download model tflite
-https://drive.usercontent.google.com/download?id=1COZ33_6TL0HDKT3E8tSmru4xN6lFcjPT&export=download&authuser=0&confirm=t&uuid=583109d4-b24b-49a4-a93b-5de0a58bf505&at=APZUnTXCnBapivAZo-A7JaprQtTO:1704557391656
+https://drive.usercontent.google.com/download?id=1BOdiCALNRjd3jeLK94V9UW_aN7Hsp0kw&export=download&authuser=0&confirm=t&uuid=0a0181e0-2994-4066-be50-a46b064a0842&at=APZUnTVmbUmJSmdHzSmWAp8gBip0:1705751548101
