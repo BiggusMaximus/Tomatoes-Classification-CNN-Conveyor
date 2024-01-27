@@ -1,36 +1,50 @@
 import cv2
-
+import datetime
 
 def take_picture():
     # Initialize the camera
-    camera = cv2.VideoCapture(
-        0
-    )  # 0 represents the default camera, change it if you have multiple cameras
+    camera = cv2.VideoCapture(0)
 
     if not camera.isOpened():
         print("Error: Could not open camera")
         return
 
-    # Capture a frame
-    ret, frame = camera.read()
+    taking_picture = False
 
-    if not ret:
-        print("Error: Failed to capture image")
-        return
+    while True:
+        # Capture a frame
+        ret, frame = camera.read()
 
-    # Display the captured image
-    cv2.imshow("Captured Image", frame)
-    cv2.waitKey(0)  # Waits indefinitely until a key is pressed
-    cv2.destroyAllWindows()
+        if not ret:
+            print("Error: Failed to capture image")
+            break
 
-    # Save the captured image
-    image_name = "captured_image.jpg"
-    cv2.imwrite(image_name, frame)
-    print(f"Image saved as {image_name}")
+        # Display the captured image
+        cv2.imshow("Press 'e' to take picture or 'q' to quit", frame)
 
-    # Release the camera
+        # Check for key press
+        key = cv2.waitKey(1) & 0xFF
+
+        if key == ord('e'):
+            taking_picture = True
+
+        if taking_picture:
+            # Get current date and time
+            current_time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+
+            # Save the captured image
+            image_name = f"./setengah matang_fix/captured_image_{current_time}.jpg"
+            cv2.imwrite(image_name, frame)
+            print(f"Image saved as {image_name}")
+
+            taking_picture = False
+
+        if key == ord('q'):
+            break
+
+    # Release the camera and close windows
     camera.release()
-
+    cv2.destroyAllWindows()
 
 if __name__ == "__main__":
     take_picture()

@@ -1,21 +1,22 @@
 #include <Arduino.h>
 
-void receiveCommand(){
-    if (Serial.available() > 0) {
-    String input = Serial.readStringUntil('\n');  // Read the string until newline character
-    input.trim();  // Remove leading/trailing whitespaces
+String receiveString() {
+  String receivedString = "";
+  static char buffer[64];  // Buffer to store incoming characters
 
-    // Check if the received string is valid and contains instructions
-    if (input.length() > 0) {
-      if (input == "rotate") {
-        // Rotate the stepper motor
-        myStepper.step(1); // Step one step in one direction
-        // Delay can be adjusted to change the speed of rotation
-        Serial.println("stop");
-        delay(5);  // Adjust delay time as needed
-      } else if (input == "stop") {
-        Serial.println("stop");
-      }
+  while (Serial.available() > 0) {
+    char incomingChar = Serial.read();
+
+    // Check for the end of the string (newline character)
+    if (incomingChar == '\n') {
+      buffer[0] = '\0';  // Null-terminate the buffer
+      receivedString = String(buffer);
+      break;
     }
+
+    // Append the incoming character to the buffer
+    strncat(buffer, &incomingChar, 1);
   }
+
+  return receivedString;
 }

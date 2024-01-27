@@ -11,13 +11,8 @@ void setup()
 
 void loop()
 {
-  // moveServo("0");
-  // delay(1000);
-  // moveServo("1");
-  // delay(1000);
-  // moveServo("2");
-  // delay(1000);
-  // moveServo("3");
-  // delay(1000);
-  conveyorStepper.step(1);
+   String receivedData = receiveString();
+   Serial.println("Data received : " + receivedData);
+   moveServo(receivedData);
+   conveyorStepper(1);
 }
