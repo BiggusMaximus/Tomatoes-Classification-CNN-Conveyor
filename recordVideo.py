@@ -17,10 +17,11 @@ def record_video():
         # Add text to the frame
         font = cv2.FONT_HERSHEY_SIMPLEX
         if recording:
-            cv2.putText(frame, 'Recording...', (10, 50), font, 1, (0, 0, 255), 2, cv2.LINE_AA)
+            cv2.putText(frame, 'Recording...', (10, 30), font, 0.5, (0, 0, 255), 1, cv2.LINE_AA)
         else:
-            cv2.putText(frame, 'Press \'r\' to start recording', (10, 50), font, 1, (0, 255, 0), 2, cv2.LINE_AA)
-            cv2.putText(frame, 'Press \'q\' to quit', (10, 100), font, 1, (0, 255, 0), 2, cv2.LINE_AA)
+            cv2.putText(frame, 'Press \'r\' to start recording', (10, 30), font, 0.5, (0, 255, 0), 1, cv2.LINE_AA)
+            cv2.putText(frame, 'Press \'q\' to quit', (10, 60), font, 0.5, (0, 255, 0), 1, cv2.LINE_AA)
+            cv2.putText(frame, 'Press \'c\' to close window', (10, 90), font, 0.5, (0, 255, 0), 1, cv2.LINE_AA)
 
         # Display the resulting frame
         cv2.imshow('frame', frame)
@@ -40,8 +41,8 @@ def record_video():
         if recording:
             out.write(frame)
 
-        # Break the loop when 'q' is pressed
-        if cv2.waitKey(1) & 0xFF == ord('q'):
+        # Close window when 'c' is pressed
+        if cv2.waitKey(1) & 0xFF == ord('c'):
             break
 
     # Release the capture and writer
