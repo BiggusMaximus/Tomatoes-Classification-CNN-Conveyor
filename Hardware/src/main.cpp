@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include "servoControl.h"
 #include "stepperControl.h"
+#include "receiveData.h"
 
 void setup()
 {
@@ -11,8 +12,9 @@ void setup()
 
 void loop()
 {
-   String receivedData = receiveString();
-   Serial.println("Data received : " + receivedData);
-   moveServo(receivedData);
-   conveyorStepper(1);
+  String receivedMessage = Serial.readStringUntil('\n'); // Read the incoming message until a newline character
+  if (receivedMessage.length() > 0) {
+      Serial.println("Data received : " + receivedMessage);
+      moveServo(receivedMessage);
+  }
 }

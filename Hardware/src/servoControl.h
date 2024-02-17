@@ -13,9 +13,6 @@ void servoInitialize()
     Servo1.attach(SERVO_1);
     Servo2.attach(SERVO_2);
     Servo3.attach(SERVO_3);
-    pinMode(A0, INPUT);
-    pinMode(A1, INPUT);
-    pinMode(A2, INPUT);
     Servo1.write(100);
     Servo2.write(100);
     Servo3.write(105);
@@ -37,6 +34,7 @@ void servoCalibration()
 
 void moveServo(String command)
 {
+    Serial.println("Command Servo : " + command);
     if (command == "0")
     {
         Servo1.write(120);
