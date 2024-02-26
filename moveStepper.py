@@ -1,49 +1,37 @@
-from machine import Pin
-import utime
- 
-class Stepper:
-    def __init__(self, step_pin, dir_pin):
-        self.step_pin = Pin(step_pin, Pin.OUT)
-        self.dir_pin = Pin(dir_pin, Pin.OUT)
-        self.position = 0
- 
-    def set_speed(self, speed):
-        self.delay = 1 / abs(speed)  # delay in seconds
- 
-    def set_direction(self, direction):
-        self.dir_pin.value(direction)
- 
-    def move_to(self, position):
-        self.set_direction(1 if position > self.position else 0)
-        while self.position != position:
-            self.step_pin.value(1)
-            utime.sleep(self.delay)
-            self.step_pin.value(0)
-            self.position += 1 if position > self.position else -1
- 
-# Define the pins
-step_pin = 17  # GPIO number where step pin is connected
-dir_pin = 16   # GPIO number where dir pin is connected
- 
-# Initialize stepper
-stepper = Stepper(step_pin, dir_pin)
- 
-def loop():
+import RPi.GPIO as GPIO
+import time
+
+# Define GPIO pins for motor control
+DIR = 20
+STEP = 21
+CW = 1
+CCW = 0
+
+# Set up GPIO
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(DIR, GPIO.OUT)
+GPIO.setup(STEP, GPIO.OUT)
+
+# Set up motor direction (CW/CCW) and step mode (full, half, etc.)
+GPIO.output(DIR, CW)  # Set direction: CW or CCW
+delay = 0.0005  # Set the delay between steps (adjust for your motor)
+
+# Set up steps per revolution for your motor
+SPR = 200  # Steps per revolution
+
+# Function to rotate stepper motor
+def step(steps):
+    for _ in range(steps):
+        GPIO.output(STEP, GPIO.HIGH)
+        time.sleep(delay)
+        GPIO.output(STEP, GPIO.LOW)
+        time.sleep(delay)
+
+try:
     while True:
-        # Move forward 2 revolutions (400 steps) at 200 steps/sec
-        stepper.set_speed(200)
-        stepper.move_to(400)
-        utime.sleep(1)
- 
-        # Move backward 1 revolution (200 steps) at 600 steps/sec
-        stepper.set_speed(600)
-        stepper.move_to(200)
-        utime.sleep(1)
- 
-        # Move forward 3 revolutions (600 steps) at 400 steps/sec
-        stepper.set_speed(400)
-        stepper.move_to(600)
-        utime.sleep(3)
- 
-if __name__ == '__main__':
-    loop()
+        steps = int(input("Enter number of steps (positive for CW, negative for CCW, 0 to stop): "))
+        if steps == 0:
+            break
+        step(abs(steps))
+except KeyboardInterrupt:
+    GPIO.cleanup()
