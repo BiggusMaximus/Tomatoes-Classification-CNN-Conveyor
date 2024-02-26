@@ -1,37 +1,42 @@
-import RPi.GPIO as GPIO
-import time
+from time import sleep
+import pigpio
 
-# Define GPIO pins for motor control
-DIR = 20
-STEP = 21
-CW = 1
-CCW = 0
+DIR = 20     # Direction GPIO Pin
+STEP = 21    # Step GPIO Pin
+SWITCH = 16  # GPIO pin of switch
 
-# Set up GPIO
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(DIR, GPIO.OUT)
-GPIO.setup(STEP, GPIO.OUT)
+# Connect to pigpiod daemon
+pi = pigpio.pi()
 
-# Set up motor direction (CW/CCW) and step mode (full, half, etc.)
-GPIO.output(DIR, CW)  # Set direction: CW or CCW
-delay = 0.0005  # Set the delay between steps (adjust for your motor)
+# Set up pins as an output
+pi.set_mode(DIR, pigpio.OUTPUT)
+pi.set_mode(STEP, pigpio.OUTPUT)
 
-# Set up steps per revolution for your motor
-SPR = 200  # Steps per revolution
+# Set up input switch
+pi.set_mode(SWITCH, pigpio.INPUT)
+pi.set_pull_up_down(SWITCH, pigpio.PUD_UP)
 
-# Function to rotate stepper motor
-def step(steps):
-    for _ in range(steps):
-        GPIO.output(STEP, GPIO.HIGH)
-        time.sleep(delay)
-        GPIO.output(STEP, GPIO.LOW)
-        time.sleep(delay)
+MODE = (14, 15, 18)   # Microstep Resolution GPIO Pins
+RESOLUTION = {'Full': (0, 0, 0),
+              'Half': (1, 0, 0),
+              '1/4': (0, 1, 0),
+              '1/8': (1, 1, 0),
+              '1/16': (0, 0, 1),
+              '1/32': (1, 0, 1)}
+for i in range(3):
+    pi.write(MODE[i], RESOLUTION['Full'][i])
+
+# Set duty cycle and frequency
+pi.set_PWM_dutycycle(STEP, 128)  # PWM 1/2 On 1/2 Off
+pi.set_PWM_frequency(STEP, 500)  # 500 pulses per second
 
 try:
     while True:
-        steps = int(input("Enter number of steps (positive for CW, negative for CCW, 0 to stop): "))
-        if steps == 0:
-            break
-        step(abs(steps))
+        pi.write(DIR, pi.read(SWITCH))  # Set direction
+        sleep(.1)
+
 except KeyboardInterrupt:
-    GPIO.cleanup()
+    print ("\nCtrl-C pressed.  Stopping PIGPIO and exiting...")
+finally:
+    pi.set_PWM_dutycycle(STEP, 0)  # PWM off
+    pi.stop()
