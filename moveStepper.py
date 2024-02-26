@@ -1,40 +1,49 @@
-from machine import Pin, Timer
+from machine import Pin
 import utime
  
-dir_pin = Pin(24, Pin.OUT)
-step_pin = Pin(25, Pin.OUT)
-steps_per_revolution = 200
+class Stepper:
+    def __init__(self, step_pin, dir_pin):
+        self.step_pin = Pin(step_pin, Pin.OUT)
+        self.dir_pin = Pin(dir_pin, Pin.OUT)
+        self.position = 0
  
-# Initialize timer
-tim = Timer()
+    def set_speed(self, speed):
+        self.delay = 1 / abs(speed)  # delay in seconds
  
-def step(t):
-    global step_pin
-    step_pin.value(not step_pin.value())
+    def set_direction(self, direction):
+        self.dir_pin.value(direction)
  
-def rotate_motor(delay):
-    # Set up timer for stepping
-    tim.init(freq=1000000//delay, mode=Timer.PERIODIC, callback=step)
+    def move_to(self, position):
+        self.set_direction(1 if position > self.position else 0)
+        while self.position != position:
+            self.step_pin.value(1)
+            utime.sleep(self.delay)
+            self.step_pin.value(0)
+            self.position += 1 if position > self.position else -1
+ 
+# Define the pins
+step_pin = 17  # GPIO number where step pin is connected
+dir_pin = 16   # GPIO number where dir pin is connected
+ 
+# Initialize stepper
+stepper = Stepper(step_pin, dir_pin)
  
 def loop():
     while True:
-        # Set motor direction clockwise
-        dir_pin.value(1)
- 
-        # Spin motor slowly
-        rotate_motor(2000)
-        utime.sleep_ms(steps_per_revolution)
-        tim.deinit()  # stop the timer
+        # Move forward 2 revolutions (400 steps) at 200 steps/sec
+        stepper.set_speed(200)
+        stepper.move_to(400)
         utime.sleep(1)
  
-        # Set motor direction counterclockwise
-        dir_pin.value(0)
- 
-        # Spin motor quickly
-        rotate_motor(1000)
-        utime.sleep_ms(steps_per_revolution)
-        tim.deinit()  # stop the timer
+        # Move backward 1 revolution (200 steps) at 600 steps/sec
+        stepper.set_speed(600)
+        stepper.move_to(200)
         utime.sleep(1)
+ 
+        # Move forward 3 revolutions (600 steps) at 400 steps/sec
+        stepper.set_speed(400)
+        stepper.move_to(600)
+        utime.sleep(3)
  
 if __name__ == '__main__':
     loop()
