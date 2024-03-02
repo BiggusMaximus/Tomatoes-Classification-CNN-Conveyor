@@ -23,6 +23,7 @@ RESOLUTION = {'Full': (0, 0, 0),
               '1/8': (1, 1, 0),
               '1/16': (0, 0, 1),
               '1/32': (1, 0, 1)}
+
 for i in range(3):
     pi.write(MODE[i], RESOLUTION['Full'][i])
 
@@ -37,6 +38,7 @@ try:
 
 except KeyboardInterrupt:
     print ("\nCtrl-C pressed.  Stopping PIGPIO and exiting...")
+    
 finally:
     pi.set_PWM_dutycycle(STEP, 0)  # PWM off
     pi.stop()

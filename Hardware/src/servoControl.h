@@ -1,14 +1,14 @@
 #include <Servo.h>
 #include <Arduino.h>
-#define SERVO_1 9
+#define SERVO_1 11
 #define SERVO_2 10
-#define SERVO_3 11
+#define SERVO_3 9
 
 Servo Servo1;
 Servo Servo2;
 Servo Servo3;
 
-void servoInitialize()
+void servoInitialization()
 {
     Servo1.attach(SERVO_1);
     Servo2.attach(SERVO_2);
@@ -30,6 +30,34 @@ void servoCalibration()
     Servo2.write(angle2);
     Servo3.write(angle3);
     Serial.println("Angle 1 : " + String(angle1) + " | Angle 2 : " + String(angle2) + " | Angle 3 : " + String(angle3));
+}
+
+
+void testServo(){
+
+    Serial.println("0");
+    Servo1.write(120);
+    Servo2.write(130);
+    Servo3.write(120);
+
+    delay(3000);
+    Serial.println("1");
+    Servo1.write(85);
+    Servo2.write(130);
+    Servo3.write(120);
+
+    delay(3000);
+    Serial.println("2");
+    Servo1.write(85);
+    Servo2.write(70);
+    Servo3.write(120);
+    delay(3000);
+    Serial.println("3");
+    Servo1.write(85);
+    Servo2.write(70);
+    Servo3.write(90);
+    delay(3000);
+    
 }
 
 void moveServo(String command)

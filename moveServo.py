@@ -10,7 +10,7 @@ SERVO3_PIN = 27
 GPIO.setmode(GPIO.BOARD)
 
 # Set pin 11 as an output, and define as servo1 as PWM pin
-GPIO.setup(SERVO1_PIN ,GPIO.OUT)
+GPIO.setup(17 ,GPIO.OUT)
 GPIO.setup(SERVO2_PIN ,GPIO.OUT)
 GPIO.setup(SERVO3_PIN ,GPIO.OUT)
 

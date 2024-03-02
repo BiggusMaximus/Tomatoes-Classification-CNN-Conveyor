@@ -1,21 +1,24 @@
-#include <Stepper.h>
 #include <Arduino.h>
+#include <AccelStepper.h>
 
-#define RPM_VAL 30
-const int stepsPerRevolution = 200;
-Stepper conveyorStepper(stepsPerRevolution, A2, A3, A4, A5); // IN1, IN2, IN3, IN4
+const int dirPin = 7;
+const int stepPin = 6;
+
+// Define motor interface type
+#define motorInterfaceType 1
+
+// Creates an instance
+AccelStepper myStepper(motorInterfaceType, stepPin, dirPin);
 
 void stepperIntialization()
 {
-    conveyorStepper.setSpeed(RPM_VAL);
+    myStepper.setMaxSpeed(200);
+	myStepper.setAcceleration(1);
+	myStepper.setSpeed(100);
 }
 
-void stopStepper()
-{
-    conveyorStepper.step(0);
-}
 
 void moveStepper()
 {
-    conveyorStepper.step(10);
+    myStepper.runSpeed();
 }
