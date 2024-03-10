@@ -10,7 +10,8 @@ print("Camera resolution: {} x {}".format(width, height))
 
 port = "COM6"
 try:    
-    ser = serial.Serial('COM6', 9600)
+    ser = serial.Serial(port, 9600)
+    ser.reset_input_buffer()
 except:
     print("Error cant connect to Arduino")
 
@@ -27,8 +28,10 @@ while True:
     if ((is_tomat_exist) and (coor[0] < 255) and (coor[0] > 245)):
         print(f"kontol, {coor}")
         cv2.imwrite("kontol.jpg", frame)
+        ser.write(b"0\n")
     else:
         print(coor)
+        ser.write(b"1\n")
 
     # Display the frame with bounding boxes
     cv2.imshow('Tomato Detection', frame_with_boxes)
@@ -41,5 +44,3 @@ while True:
 cap.release()
 cv2.destroyAllWindows()
 
-if __name__ == '__main__':
-    
