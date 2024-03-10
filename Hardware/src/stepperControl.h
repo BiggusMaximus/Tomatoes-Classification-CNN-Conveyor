@@ -1,24 +1,33 @@
 #include <Arduino.h>
-#include <AccelStepper.h>
+#define SPEED_MOVING 10000
 
 const int dirPin = 7;
 const int stepPin = 6;
+const int stepsPerRevolution = 200;
 
-// Define motor interface type
-#define motorInterfaceType 1
 
-// Creates an instance
-AccelStepper myStepper(motorInterfaceType, stepPin, dirPin);
 
 void stepperIntialization()
 {
-    myStepper.setMaxSpeed(200);
-	myStepper.setAcceleration(1);
-	myStepper.setSpeed(100);
+	pinMode(stepPin, OUTPUT);
+	pinMode(dirPin, OUTPUT);
+
 }
 
 
-void moveStepper()
+void moveStepper(String status)
 {
-    myStepper.runSpeed();
+    digitalWrite(dirPin, HIGH);
+	while(status != "1")
+	{
+		digitalWrite(stepPin, HIGH);
+		delayMicroseconds(SPEED_MOVING);
+		digitalWrite(stepPin, LOW);
+		delayMicroseconds(SPEED_MOVING);
+	}
 }
+void stopStepper()
+{
+    digitalWrite(stepPin, LOW);
+}
+
