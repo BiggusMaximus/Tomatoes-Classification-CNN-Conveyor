@@ -1,5 +1,5 @@
 #include <Arduino.h>
-#define SPEED_MOVING 2500
+#define SPEED_MOVING 500
 
 const int dirPin = 7;
 const int stepPin = 6;

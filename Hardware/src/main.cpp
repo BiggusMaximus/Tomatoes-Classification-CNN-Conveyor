@@ -10,7 +10,7 @@ String status = "N";
 unsigned long previousMillis = 0;  
 const long interval = 10000;        
 bool tomat_baru = true;
-
+String tomat_class = "None";
 uint8_t count = 0;
 String servos[3] = {"Servo 1", "Servo 2", "Servo 3"};
 
@@ -25,22 +25,28 @@ void setup()
 
 void loop()
 {
+  moveStepper();
+  long unsigned int sensor_reading[2] = {sonar1.ping_cm(), sonar2.ping_cm()};
+  float *kalman_distance = kalmanFilter(sensor_reading);
 
-  if(Serial.available() > 0){
-    moveStepper();
-    long unsigned int sensor_reading[2] = {sonar1.ping_cm(), sonar2.ping_cm()};
-    float *kalman_distance = kalmanFilter(sensor_reading);
-    if ((kalman_distance[0] < 6) and (tomat_baru)){
-      Serial.println("Detected");
-      stopStepper();
-      String tomat_class = Serial.readStringUntil('\n');
-      moveServo(tomat_class);
-      tomat_baru = false;
-    }
-
-    if (kalman_distance[1] < 6){
-      tomat_baru = true;
+  if ((kalman_distance[0] < 7) and (tomat_baru)){
+    Serial.println("Detected");
+    stopStepper();
+    tomat_class = Serial.readStringUntil('\n');
+    moveServo(tomat_class);
+    tomat_baru = false;
   }
+
+  if (kalman_distance[1] < 6){
+    tomat_baru = true;
+  }
+
+  Serial.println(
+  "S1 : " + String(kalman_distance[0]) + 
+  " | S2 : " + String(kalman_distance[1]) + 
+  " | New Tomat? : " + String(tomat_baru) + 
+  " | Class : " + String(tomat_class));
+  kalman_distance[2] = {};
   /*
     F : Found
     X : Not Found
